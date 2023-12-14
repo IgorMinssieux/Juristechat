@@ -2,7 +2,6 @@ import os
 import streamlit as st
 from openai import OpenAI
 # Set your OpenAI API key
-openai.api_key = 'YOUR_API_KEY'
 
 with st.sidebar:
     st.title('🤖💬 OpenAI Chatbot')
