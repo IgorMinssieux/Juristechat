@@ -31,7 +31,7 @@ if prompt := st.chat_input("What is up?"):
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
         full_response = ""
-        for response in client.completions.create(
+        for response in OpenAI().completions.create(
             model="gpt-3.5-turbo"):
             full_response += response.choices[0].delta.get("content", "")
             message_placeholder.markdown(full_response + "▌")
