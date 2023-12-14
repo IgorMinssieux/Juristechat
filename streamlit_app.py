@@ -1,6 +1,9 @@
 import openai
 import streamlit as st
 
+# Set your OpenAI API key
+openai.api_key = 'YOUR_API_KEY'
+
 with st.sidebar:
     st.title('🤖💬 OpenAI Chatbot')
     if 'OPENAI_API_KEY' in st.secrets:
@@ -8,7 +11,7 @@ with st.sidebar:
         openai.api_key = st.secrets['OPENAI_API_KEY']
     else:
         openai.api_key = st.text_input('Enter OpenAI API token:', type='password')
-        if not (openai.api_key.startswith('sk-') and len(openai.api_key)==51):
+        if not (openai.api_key.startswith('sk-') and len(openai.api_key) == 51):
             st.warning('Please enter your credentials!', icon='⚠️')
         else:
             st.success('Proceed to entering your prompt message!', icon='👉')
@@ -27,11 +30,19 @@ if prompt := st.chat_input("What is up?"):
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
         full_response = ""
-        for response in openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": m["role"], "content": m["content"]}
-                      for m in st.session_state.messages], stream=True):
-            full_response += response.choices[0].delta.get("content", "")
-            message_placeholder.markdown(full_response + "▌")
-        message_placeholder.markdown(full_response)
+
+        try:
+            response = openai.Completion.create(
+                engine="text-davinci-003",
+                prompt=full_response + prompt,
+                temperature=0.7,
+                max_tokens=150,
+                n=1,
+                stop=None
+            )
+            full_response += response.choices[0].text.strip()
+            message_placeholder.markdown(full_response)
+        except Exception as e:
+            st.error(f"An error occurred: {str(e)}")
+
     st.session_state.messages.append({"role": "assistant", "content": full_response})
