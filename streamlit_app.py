@@ -36,9 +36,6 @@ if prompt := st.chat_input("What is up?"):
 
         try:
             response = client.completions.create(model='curie')
-                        print(completion.choices[0].text)
-                        print(dict(completion).get('usage'))
-                        print(completion.model_dump_json(indent=2))
             full_response += response.choices[0].text.strip()
             message_placeholder.markdown(full_response)
         except Exception as e:
