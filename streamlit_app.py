@@ -1,5 +1,4 @@
 import os
-import openai
 import streamlit as st
 from openai import OpenAI
 # Set your OpenAI API key
@@ -9,11 +8,9 @@ with st.sidebar:
     st.title('🤖💬 OpenAI Chatbot')
     if 'OPENAI_API_KEY' in st.secrets:
         st.success('API key already provided!', icon='✅')
-        openai.api_key = st.secrets['OPENAI_API_KEY']
         client = OpenAI(
-    # This is the default and can be omitted
-    api_key=os.environ.get("OPENAI_API_KEY"),
-)
+            api_key=os.environ['OPENAI_API_KEY'],
+        )
         
     else:
         openai.api_key = st.text_input('Enter OpenAI API token:', type='password')
@@ -38,15 +35,10 @@ if prompt := st.chat_input("What is up?"):
         full_response = ""
 
         try:
-            response = client.chat.completions.create(
-    messages=[
-        {
-            "role": "user",
-            "content": "Say this is a test",
-        }
-    ],
-    model="gpt-3.5-turbo",
-)
+            response = client.completions.create(model='curie')
+                        print(completion.choices[0].text)
+                        print(dict(completion).get('usage'))
+                        print(completion.model_dump_json(indent=2))
             full_response += response.choices[0].text.strip()
             message_placeholder.markdown(full_response)
         except Exception as e:
